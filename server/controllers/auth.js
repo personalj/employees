@@ -29,10 +29,10 @@ module.exports.login = async (req, res) => {
     if(error) return res.status(400).send(error.details[0].message)
 
     const userAuth = await user.findOne({login: req.body.login})
-    if(!userAuth) return res.status(400).send('Неверный login')
+    if(!userAuth) return res.status(400).send('Неверный логин или пароль')
 
     const validPass =  await bcrypt.compare(req.body.password, userAuth.password)
-    if(!validPass) return res.status(400).send('Неверный пароль')
+    if(!validPass) return res.status(400).send('Неверный логин или пароль')
     try {
         const token = jwt.sign({_id: userAuth._id}, process.env.TOKEN_SECRET )
         res.header('auth-token', token).send(token)

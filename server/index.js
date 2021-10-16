@@ -8,6 +8,21 @@ const appFile = require('./app')
 
 const app = express()
 
+app.use(express.static('public', {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      const hashRegExp = new RegExp('\\.[0-9a-f]{8}\\.');
+  
+      if (path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (hashRegExp.test(path)) {
+        res.setHeader('Cache-Control', 'max-age=31536000');
+      }
+    },
+  }));
+app.disable('view cache');
+
 dotenv.config()
 
 app.use(bodyParser.json());
